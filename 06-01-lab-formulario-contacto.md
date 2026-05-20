@@ -1,6 +1,6 @@
 # 6.1. Lab — Formulario de contacto controlado
 
-[← Capítulo 6](06-eventos-formularios.md) | [← Lab 5.2](05-02-lab-useEffect-reloj.md) | [Índice](README.md) | [Siguiente lab →](07-01-lab-flujo-datos.md)
+[← Capítulo 6](06-eventos-formularios.md) | [← Lab 5.2](05-02-lab-useEffect-reloj.md) | [Índice](README.md) | [Siguiente lab →](07-01-lab-useContext.md)
 
 ---
 
@@ -294,4 +294,4 @@ Muestra el bloque con `resumen` en lugar de los campos vacíos:
 - Validación en el cliente y `disabled` en botones.
 - `onSubmit` y `preventDefault`.
 
-**Siguiente:** [Capítulo 7](07-comunicacion-componentes.md) y [7.1 Lab flujo de datos](07-01-lab-flujo-datos.md).
+**Siguiente:** [Capítulo 7](07-comunicacion-componentes.md) → [7.0 Lab prop drilling](07-00-lab-prop-drilling.md).

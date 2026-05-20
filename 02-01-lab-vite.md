@@ -94,7 +94,7 @@ createRoot(document.getElementById('root')!).render(
 )
 ```
 
-- `getElementById('root')` enlaza con `<motion.div id="root">` en `index.html`.
+- `getElementById('root')` enlaza con `<div id="root">` en `index.html`.
 - `createRoot(...).render(...)` es la API moderna de React 18+.
 
 **Comprobación:** puedes explicar en una frase qué hace `main.tsx` (montar `App` en `#root`).
@@ -153,7 +153,7 @@ Abre la URL que indique `preview` (a menudo `http://localhost:4173`).
 | `npm: command not found` | Instala Node.js LTS desde [nodejs.org](https://nodejs.org). |
 | Puerto distinto a 5173 | Usa la URL exacta que imprime Vite en la terminal. |
 | Pantalla en blanco | F12 → Console; suele haber error de sintaxis en `App.tsx`. |
-| `getElementById('root')` es null | `index.html` debe tener `<motion.div id="root">` → usa `<div id="root">`. |
+| `getElementById('root')` es null | `index.html` debe tener `<div id="root">` → usa `<div id="root">`. |
 
 ---
 

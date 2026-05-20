@@ -1,114 +1,82 @@
-# 7. Comunicación entre componentes
+# 7. Comunicación entre componentes (avanzado)
 
-[← Índice](README.md) | [← Anterior: 6. Eventos](06-eventos-formularios.md) | [Lab 7.1 →](07-01-lab-flujo-datos.md) | [Siguiente: 8. Routing →](08-routing.md)
-
----
-
-## Flujo unidireccional de datos
-
-En React los datos **bajan** por **props** (de padres a hijos). Los hijos **no modifican** las props; si necesitan avisar al padre, llaman a una **función** recibida por props.
-
-```
-Padre (estado) ──props──> Hijo
-Padre <──callback── Hijo (evento)
-```
-
-Este patrón se resume así: **los datos bajan, los eventos suben**.
-
-## Callbacks en props
-
-```tsx
-type HijoProps = {
-  valor: number;
-  onIncrementar: () => void;
-};
-
-function Hijo({ valor, onIncrementar }: HijoProps) {
-  return (
-    <button type="button" onClick={onIncrementar}>
-      Total: {valor}
-    </button>
-  );
-}
-
-function Padre() {
-  const [total, setTotal] = useState(0);
-  return (
-    <Hijo
-      valor={total}
-      onIncrementar={() => setTotal((t) => t + 1)}
-    />
-  );
-}
-```
-
-## Elevación de estado
-
-Si dos **hermanos** deben mostrar o modificar los mismos datos, **sube el estado** al ancestro común más cercano y pásalo a cada hijo por props.
-
-Ejemplo: lista de opciones + panel de detalle → el `id` seleccionado vive en el padre, no en cada hijo por separado.
+[← Índice](README.md) | [← Anterior: 6. Eventos](06-eventos-formularios.md) | [Lab 7.0 →](07-00-lab-prop-drilling.md) | [Siguiente: 8. Routing →](08-routing.md)
 
 ---
 
-## Lab: contador padre / hijo
+En capítulos anteriores ya trabajaste **props**, **callbacks** y **`useState`** / **`useEffect`** (cap. 4–6 y 5). Este bloque ataca el **prop drilling** y la lógica compartida en árboles grandes.
 
-### Paso 1 — `ClickCounterButton.tsx`
-
-```tsx
-import { useState } from 'react';
-
-type Props = {
-  onClickCountChange: (totalClicks: number) => void;
-};
-
-export function ClickCounterButton({ onClickCountChange }: Props) {
-  const [clicks, setClicks] = useState(0);
-
-  const handleClick = () => {
-    const nuevoTotal = clicks + 1;
-    setClicks(nuevoTotal);
-    onClickCountChange(nuevoTotal);
-  };
-
-  return (
-    <button type="button" onClick={handleClick}>
-      Pulsado {clicks} veces (hijo)
-    </button>
-  );
-}
-```
-
-### Paso 2 — `App.tsx`
-
-```tsx
-import { useState } from 'react';
-import { ClickCounterButton } from './components/ClickCounterButton';
-
-function App() {
-  const [totalClicks, setTotalClicks] = useState(0);
-
-  return (
-    <main>
-      <h1>Flujo de datos</h1>
-      <p>Total registrado en el padre: {totalClicks}</p>
-      <ClickCounterButton onClickCountChange={setTotalClicks} />
-    </main>
-  );
-}
-
-export default App;
-```
-
-Observa: el hijo tiene su propio contador local **y** notifica al padre en cada click. En ejercicios más avanzados podrías dejar solo el estado en el padre (fuente única de verdad).
+| Herramienta | Para qué sirve |
+|-------------|----------------|
+| **Props + callbacks** | Comunicación directa padre ↔ hijo (repaso en 7.0) |
+| **Context + `useContext`** | Valores globales de UI (idioma, tema) sin reenviar props |
+| **HOC** (`with…`) | Envolver componentes y añadir comportamiento reutilizable |
+| **`useReducer`** | Estado con acciones y reglas en un `reducer` |
+| **Hooks personalizados** | Encapsular Context o fetch (`useLang`, `useTheme`) |
 
 ---
 
-## Lab B (opcional): lista + detalle
+## Prop drilling
 
-1. Estado en `App`: `seleccionado: string | null`.
-2. `ListaOpciones` recibe `opciones: { id: string; label: string }[]` y `onSeleccionar(id: string)`.
-3. `Detalle` recibe `id: string | null` y muestra la etiqueta o «Nada seleccionado».
+```
+App (estado)
+ └── Layout (solo reenvía props)
+      └── Panel (usa props)
+```
 
-Sin Redux ni Context: todo en el padre.
+El lab **7.0** lo reproduce a propósito. Los labs **7.1** y **7.2** lo sustituyen por **Context**.
 
-**Entrega:** commit `feat: flujo datos padre hijo`.
+---
+
+## Context API y `useContext`
+
+1. `createContext`
+2. `<Provider value={…}>`
+3. `useContext` o un hook propio (`useLang`, `useTheme`)
+
+**Cuándo usarlo:** tema, idioma, usuario de sesión. **Cuándo no:** estado de un solo input o de un formulario local.
+
+---
+
+## Higher Order Components (HOC)
+
+Función `withAlgo(Componente)` → componente envuelto. Convención: nombre con prefijo **`with`**.
+
+- **7.3** — `withHover` (UI transversal)
+- **7.4** — `withData` (fetch + loading + inyectar `data`)
+
+En código nuevo suele preferirse **custom hooks** (lab **7.7**), pero los HOC siguen en librerías y proyectos legacy.
+
+---
+
+## `useReducer`
+
+`const [state, dispatch] = useReducer(reducer, initialState)`
+
+- **7.5** — contador con acciones tipadas
+- **7.6** — posición de una caja con teclado + `useEffect` para listeners
+
+Útil cuando muchas transiciones comparten reglas en un solo `switch`.
+
+---
+
+## Hooks personalizados
+
+Funciones `useX()` que pueden llamar a otros hooks. El lab **7.7** define `useLang()` sobre el contexto del **7.1**.
+
+---
+
+## Laboratorios (orden recomendado)
+
+| Lab | Tema |
+|-----|------|
+| [7.0 Prop drilling](07-00-lab-prop-drilling.md) | El problema (callbacks por niveles) |
+| [7.1 useContext — idioma](07-01-lab-useContext.md) | `LangProvider` + `Header` anidado |
+| [7.2 Context — tema](07-02-lab-context-tema.md) | Claro / oscuro + `useTheme` |
+| [7.3 HOC — withHover](07-03-lab-hoc-withHover.md) | Estilos hover + `{...props}` |
+| [7.4 HOC — withData](07-04-lab-hoc-withData.md) | Fetch reutilizable |
+| [7.5 useReducer — contador](07-05-lab-useReducer-contador.md) | Acciones tipadas |
+| [7.6 useReducer — caja](07-06-lab-useReducer-caja.md) | Teclado + reducer + cleanup |
+| [7.7 Hook — useLang](07-07-lab-hook-useLang.md) | Custom hook sobre Context |
+
+Cada lab es un MD dedicado: objetivo por paso, comprobaciones, retos y «si algo falla».
